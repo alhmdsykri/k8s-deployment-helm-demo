@@ -1,0 +1,8 @@
+App installed!
+
+Service: {{ include "app.fullname" . }}
+Port: {{ .Values.service.port }}
+
+If using Ingress and host "app.localtest.me":
+  Add to /etc/hosts if needed:
+    127.0.0.1 app.localtest.me

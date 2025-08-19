@@ -1,0 +1,62 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 2
+
+image:
+  repository: your-dockerhub-username/dockerized-nodejs-app-demo
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: PORT
+    value: "3000"
+
+config:
+  WELCOME_MESSAGE: "Hello from Kubernetes via ConfigMap 👋"
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: app.localtest.me
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  # contoh TLS:
+  # tls:
+  #  - secretName: app-tls
+  #    hosts:
+  #      - app.localtest.me
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  # targetMemoryUtilizationPercentage: 80  # aktifkan jika perlu

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dockerized-nodejs-app
+  namespace: demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dockerized-nodejs-app
+  template:
+    metadata:
+      labels:
+        app: dockerized-nodejs-app
+    spec:
+      containers:
+        - name: web
+          image: your-dockerhub-username/dockerized-nodejs-app-demo:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: WELCOME_MESSAGE
+              value: "Hello from K8s quickstart 👋"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dockerized-nodejs-app-svc
+  namespace: demo
+spec:
+  selector:
+    app: dockerized-nodejs-app
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dockerized-nodejs-app-ing
+  namespace: demo
+spec:
+  rules:
+    - host: app.localtest.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dockerized-nodejs-app-svc
+                port:
+                  number: 80
